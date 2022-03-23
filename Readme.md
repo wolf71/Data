@@ -5,6 +5,9 @@
 ### World City Data
 - **world_city_l3_xy.csv**
   - 209,579 city data, including: city ID, city name, continent/province, country, latitude and longitude coordinates
+- **world_country_code.csv**
+  - 245 countrys code info
+  - Contains: chinese country name, english name, english fullname, 2-ID, 3-ID, IDnum
 
 ### Chinese cities and universities
 - **cn_city_l5_2021.csv**
