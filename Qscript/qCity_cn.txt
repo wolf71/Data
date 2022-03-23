@@ -1,0 +1,27 @@
+# 比较 2019 与 2021 (2021年10月31日) 数据差异
+
+open :memory:
+loadcsv cn_city_l5_2021.csv city 1
+loadcsv cn_city_l5_2019.csv city19 1
+
+html cn_city.html
+
+echo ## 2021 中国城市数据统计
+select sum(type=1) as t1, sum(type=2) as t2, sum(type=3) as t3, sum(type=4) as t4, sum(type+0>4) as t5 from city >[ 2021年中国累计有 _@1_ 省, _@2_ 市, _@3_ 区/县, _@4_ 街道/乡镇, _@5_ 社区/村]
+
+echo ## 2021 与 2019 年数据差异
+select c21.t1 - c19.t1, c21.t2 - c19.t2, c21.t3 - c19.t3, c21.t4 - c19.t4, c21.t5 - c19.t5 from (select sum(type=1) as t1, sum(type=2) as t2, sum(type=3) as t3, sum(type=4) as t4, sum(type+0>4) as t5 from city) as c21, (select sum(type=1) as t1, sum(type=2) as t2, sum(type=3) as t3, sum(type=4) as t4, sum(type+0>4) as t5 from city19) as c19 >[2021年 相较于 2019 年数据变化(2021-2019): _@1_ 省, _@2_ 市, _@3_ 区/县, _@4_ 街道/乡镇, _@5_ 社区/村]
+
+echo ## 2021年 按省份归类统计 
+select n.name, c.t2, c.t3, c.t4, c.t5, c.r1, c.r2, c.r3, c.r4, c.r5, c.r6, c.r7 from (select code, name from city where type=1) as n, (select substr(code,1,2) as code, sum(type=2) as t2, sum(type=3) as t3, sum(type=4) as t4, sum(type+0>4) as t5, sum(type=4 and substr(code,7,1) = '0') as r1, sum(type=4 and substr(code,7,1) = '1') as r2, sum(type=4 and substr(code,7,1) in ('2','3')) as r3, sum(type=4 and substr(code,7,1) in ('4','5')) as r4, sum(type+0>4 and substr(code,10,1) in ('0','1')) as r5, sum(type+0>4 and substr(code,10,1) in ('2','3')) as r6, sum(type+0>4 and substr(code,10,1) in ('4','5')) as r7 from city group by substr(code,1,2)) as c where n.code = c.code >[- _@0_ _@1_: _@2_市, _@3_区/县, [_@6_街道, _@7_镇, _@8_乡, _@9_类乡单位], [_@10_社区, _@11_村, _@12_其它] ]
+
+
+echo ## 2021年 相比 2019年的变化
+  select n.name, c21.t2 - c19.t2, c21.t3 - c19.t3, c21.t4 - c19.t4, c21.t5 - c19.t5 from (select code, name from city where type=1) as n, (select substr(code,1,2) as code, sum(type=2) as t2, sum(type=3) as t3, sum(type=4) as t4, sum(type+0>4) as t5 from city group by substr(code,1,2)) as c21, (select substr(code,1,2) as code, sum(type=2) as t2, sum(type=3) as t3, sum(type=4) as t4, sum(type+0>4) as t5 from city19 group by substr(code,1,2)) as c19 where c21.code = c19.code and n.code = c21.code >[_@0_ _@1_: _@2_ 市, _@3_ 区/县, _@4_ 街道/乡镇, _@5_ 社区/村]
+
+# 列出具体差异城市
+# 1. 列出 2021 年少了的城市
+echo ## 2021 年 取消的城市
+select n.name, c.name from (select code,name from city where type = 1) as n, (select code,name from city19 where type=2 and code not in (select code from city where type=2) order by code) as c where substr(n.code,1,2) = substr(c.code,1,2)
+
+chtml

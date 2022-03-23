@@ -1,0 +1,39 @@
+# 根据城市数据绘制地图
+
+html city_map.html
+
+# 从 csv 文件加载数据 到 内存数据库
+open :memory:
+loadcsv world_city_l3_xy.csv w 1
+loadcsv cn_city_l3_xy.csv c 1
+# 这个带有人口数据
+loadcsv cn_city_l2_xyp.csv c2 1
+loadcsv us_city_l3_xyp.csv u 1
+
+
+echo ## 世界城市地图
+draw s select lon, lat, 1 from w 
+
+echo ## 世界地图中的 中国 美国 日本 
+# using Qsqlite slist function
+draw s select lon, lat, 1, slist('#1f77b4,red,blue,#e377c2',0+(country='CN')+(country='US')*2+(country='JP')*3) from w
+
+# Or can using sqlite iif(x,y,z) or case when ... then ... else ... end 
+# draw s select lon, lat, 1, case when country='CN' then 'red' else case when country='US' then 'blue' else case when country='JP' then '#e377c2' else '#1f77b4' end end end  from w
+# draw s select lon, lat, 1, iif(country='CN', 'red', iif(country='US','blue', iif(country='JP','#e377c2','#1f77b4'))) from w
+
+# 用 两个表 数据进行 left outer join, 将城市的人口数据带入
+echo ## 中国城市地图 ( 红色为市，按人口规模比例；蓝色为区/县 )
+draw s select lon, lat, ifnull(n,1) n, case when n is null then '#1f77b4' else 'red' end from c left outer join (select id||substr('0000',1,6-length(id)) as id, population/10 as n from c2) as p on c.id = p.id
+
+echo ## 美国城市地图       美国本土区域地图（带人口规模）
+draw s select lon,lat,1 from u; draw s select lon,lat,population/10000 from u where lat>25 and lat<50
+
+echo ## 中国 城市 人口直方图数据      双对数直方图
+draw h select population * 10000.0 from c2; draw hl select population * 10000.0 from c2
+
+echo ## 美国 城镇 人口直方图数据      双对数直方图
+draw h select population+0.0 from u; draw hl select population+0.0 from u
+
+chtml
+

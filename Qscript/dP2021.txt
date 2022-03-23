@@ -1,0 +1,48 @@
+'''
+  对 cn_city_2021.csv 数据进行提取, 而后构建完整的地址前缀信息,便于在显示完整地址时使用
+  1. 将 csv 数据导入内存数据库
+  2. 进行 地址前缀 字段计算,生成
+  3. 将数据写入到新的 csv 文件 
+
+'''
+
+# 读取 csv 到数据库
+
+open :memory:
+loadcsv cn_city_l5_2021.csv city 1
+
+# 构建一个 前缀字段 (ptxt)
+alter table city add column ptxt Text
+
+# 将 省 的 ptxt 设为 '' 
+update city set ptxt = '' where type=1
+
+# 市 前添加 省份
+update city set ptxt = n.name from (select code, name from city where type=1) as n where type=2 and substr(city.code,1,2) = substr(n.code,1,2)
+
+# 区/县 前 添加 省-市
+update city set ptxt = n.ptxt || n.name from (select code, name, ptxt from city where type=2) as n where type=3 and substr(city.code,1,4) = substr(n.code,1,4)
+
+# 街道/乡镇 前 添加 省-市-县
+# 速度慢，要 13s 才能完成 update city set ptxt = n.ptxt || n.name from (select substr(code,1,6) as code, name, ptxt from city where type=3) as n where type=4 and substr(city.code,1,6) = n.code
+# 构建 临时表，用于加速 （1s 以内完成)
+create table n (code text, ptxt text)
+insert into n select substr(code,1,6) as code, ptxt||name as ptxt from city where type=3
+# update 
+update city set ptxt = n.ptxt from (select code,ptxt from n) as n where type=4 and substr(city.code,1,6) = n.code
+
+
+# 社区/村 前 添加 省-市-县-街道
+# 速度太慢，无法接受 update city set ptxt = n.ptxt from (select substr(code,1,9), ptxt || name as ptxt from city where type=4) as n where type+0>4 and substr(city.code,1,9) = substr(n.code,1,9)
+# 构建 临时表，用于加速 （1s 以内完成)
+drop table n
+create table n (code text, ptxt text)
+insert into n select substr(code,1,9) as code, ptxt||name as ptxt from city where type=4
+# update 
+update city set ptxt = n.ptxt from (select code,ptxt from n) as n where type+0>4 and substr(city.code,1,9) = n.code
+
+# 有大约 1227 个 社区/村 属于直接 县->村，跳过了街道/乡镇，因此需要特殊处理
+update city set ptxt = n.ptxt from (select substr(code,1,9) as code, ptxt||name as ptxt from city where type=3) as n where city.ptxt is null and type+0>4 and substr(city.code,1,9) = n.code
+
+# 保存到新的 csv 文件
+select * from city >csv new_2021.csv 1
