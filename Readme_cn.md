@@ -35,7 +35,7 @@
 
 ## 数据处理程序 （/Qscript)
 - 请使用 [Qsqlite](https://github.com/wolf71/Qsqlite) 程序运行这些脚本 
-- **qMap.txt** 使用城市数据, 绘制对应的地图, 运行后的页面见: [city_map.html](Qsqlite/city_map.html)
+- **qMap.txt** 使用城市数据, 绘制对应的地图, 运行后的页面见: [city_map.html](Qscript/city_map.html)
   - 将 qMap.txt 复制到 数据库文件/csv文件 同一个目录
   - 用 Qsqlite qMap.txt 运行, 而后检查生成的 city_map.html 文件
 - **dP2021.txt** 对 cn_city_l5_2021.csv 数据进行加工, 增加一个 ptxt 地址前缀字段, 便于快速地址完整显示

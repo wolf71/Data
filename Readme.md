@@ -17,7 +17,7 @@
 
 - **cn_city_l2_xyp.csv**
   - 330 cities in China with latitude and longitude, population data
-  - Contains: city code, province + city name, city name, population (million people), latitude and longitude
+  - Contains: city code, province + city name, city name, population (10K people), latitude and longitude
 
 - **cn_city_l3_xy.csv**
   - 3198 cities/counties in China with latitude and longitude data
@@ -35,7 +35,7 @@
 
 ## Data processing program (/Qscript)
 - Please use the [Qsqlite](https://github.com/wolf71/Qsqlite) program to run these scripts 
-- **qMap.txt** uses the city data and draws the citys map, generate html file: [city_map.html](Qsqlite/city_map.html)
+- **qMap.txt** uses the city data and draws the citys map, generate html file: [city_map.html](Qscript/city_map.html)
   - Copy qMap.txt to the same directory as the database file/csv file
   - Run it with Qsqlite qMap.txt, and then check the generated city_map.html file
 - **dP2021.txt** process the cn_city_l5_2021.csv data, add a ptxt address prefix field for quick and complete address display
