@@ -34,6 +34,10 @@
   - China 4716 listed companies until 2022/3
   - Contains: stock code, stock name, company name, province, city, 2018 revenue, 2018 net profit, 2019 revenue, 2019 net profit, 2020 revenue, 2020 net profit, number of employees, date of listing, industry, product type, main business description
 
+- **cn_corp_pettm.csv**
+  - China Listed Companies 2018/12, 2019/12, 2020/12, 2021/12 Monthly Average Dynamic P/E (peTTM).
+  - Including: Stock Code, 2018/12 Monthly Average peTTM, 2019/12 Monthly Average peTTM, 2020/12 Monthly Average peTTM, 2021/12 Monthly Average peTTM.
+
 
 ### U.S. cities
 - **us_city_l3_xyp.csv**
