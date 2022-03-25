@@ -9,7 +9,7 @@
   - 245 countrys code info
   - Contains: chinese country name, english name, english fullname, 2-ID, 3-ID, IDnum
 
-### Chinese cities and universities
+### Chinese cities and Enterprise / Universities
 - **cn_city_l5_2021.csv**
   - China 2021/10/31 Province - City - County - Street - Community Five-level data
   - Includes: 31 provinces, 342 cities, 3343 districts/counties, 41278 streets/towns, 618133 communities/villages
@@ -29,6 +29,11 @@
 - **cn_University.csv**
   - Data of 2688 universities in China
   - Contains: university code, university name, department, city, level(university/college), category(public/private), level(985/211/...)
+
+- **cn_corp202012.csv**
+  - China 4716 listed companies until 2022/3
+  - Contains: stock code, stock name, company name, province, city, 2018 revenue, 2018 net profit, 2019 revenue, 2019 net profit, 2020 revenue, 2020 net profit, number of employees, date of listing, industry, product type, main business description
+
 
 ### U.S. cities
 - **us_city_l3_xyp.csv**
@@ -53,4 +58,8 @@
 ### China 2021/10/31 Province - City - County - Street - Community Five-level data
 - **getCity_2021.py**
   - run: python3 getCity_2021.py, the csv file will generated.
+### China Listed Companies Data Crawl (/App/GetCorp)
+- **getCorpInfo.py**
+  - Open the program, modify the parameter, and then run it.
+  - After the data crawl, clean and integrate the data as described in the comments.
 

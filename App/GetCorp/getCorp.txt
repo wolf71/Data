@@ -1,0 +1,60 @@
+'''
+
+  处理 getCorpInfo.py 抓取的数据，而后合并到一个 csv 文件输出
+
+'''
+
+open :memory:
+loadcsv corp202012.csv c 1
+loadcsv corp201812.csv c18 1
+loadcsv corp201912.csv c19 1
+
+# 处理股票代码补位
+update c set stockid = substr('00000',1,6-length(stockid)) || stockid where length(stockid) < 6
+update c18 set stockid = substr('00000',1,6-length(stockid)) || stockid where length(stockid) < 6
+update c19 set stockid = substr('00000',1,6-length(stockid)) || stockid where length(stockid) < 6
+
+# 处理字段 
+update c set revenue = cast(round(replace(revenue,'万','')*10000) as int) where revenue like '%万%'
+update c set revenue = cast(round(replace(revenue,'亿','')*100000000) as int) where revenue like '%亿%'
+
+update c18 set revenue = cast(round(replace(revenue,'万','')*10000) as int) where revenue like '%万%'
+update c18 set revenue = cast(round(replace(revenue,'亿','')*100000000) as int) where revenue like '%亿%'
+
+update c19 set revenue = cast(round(replace(revenue,'万','')*10000) as int) where revenue like '%万%'
+update c19 set revenue = cast(round(replace(revenue,'亿','')*100000000) as int) where revenue like '%亿%'
+
+# 处理字段
+update c set netprofit = cast(round(replace(netprofit,'万','')*10000) as int) where netprofit like '%万%'
+update c set netprofit = cast(round(replace(netprofit,'亿','')*100000000) as int) where netprofit like '%亿%'
+
+update c18 set netprofit = cast(round(replace(netprofit,'万','')*10000) as int) where netprofit like '%万%'
+update c18 set netprofit = cast(round(replace(netprofit,'亿','')*100000000) as int) where netprofit like '%亿%'
+
+update c19 set netprofit = cast(round(replace(netprofit,'万','')*10000) as int) where netprofit like '%万%'
+update c19 set netprofit = cast(round(replace(netprofit,'亿','')*100000000) as int) where netprofit like '%亿%'
+
+# 处理字段 (只需处理 c 的字段)
+update c set mainbusiness = replace(mainbusiness,'。','') where mainbusiness like '%。%'
+
+# 更新缺乏省、市数据
+loadcsv corpinfo_add.csv a 0
+update c set prov = a.r3, city=r4 from a where stockid=r1
+
+# 更新缺乏的 行业 信息
+loadcsv corp_industry.csv b 0
+update c set industry = r2 from b where industry='--' and stockid = r1
+
+
+# 添加字段 （将 2018/2019 收入/利润合并)
+alter table c add revenue18 text
+alter table c add netprofit18 text
+alter table c add revenue19 text
+alter table c add netprofit19 text
+
+# 将内容添加进去
+update c set revenue18 = c18.revenue, netprofit18 = c18.netprofit from c18 where c.stockid = c18.stockid
+update c set revenue19 = c19.revenue, netprofit19 = c19.netprofit from c19 where c.stockid = c19.stockid
+
+# 输出文件
+select stockid,sname,name,prov,city,revenue18,netprofit18,revenue19,netprofit19, revenue as revenue20,netprofit as netprofit20, employee,listingdate,industry,producttype,mainbusiness from c >csv output.csv 1
