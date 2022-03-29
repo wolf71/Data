@@ -41,9 +41,9 @@ update c set mainbusiness = replace(mainbusiness,'。','') where mainbusiness li
 loadcsv corpinfo_add.csv a 0
 update c set prov = a.r3, city=r4 from a where stockid=r1
 
-# 更新缺乏的 行业 信息
+# 更新 行业 信息
 loadcsv corp_industry.csv b 0
-update c set industry = r2 from b where industry='--' and stockid = r1
+update c set industry = r2 from b where stockid = r1
 
 
 # 添加字段 （将 2018/2019 收入/利润合并)

@@ -4,10 +4,15 @@
 
 ### World City Data
 - **world_city_l3_xy.csv**
-  - 209,579 city data, including: city ID, city name, continent/province, country, latitude and longitude coordinates
+  - 246 countrys, 209,579 city data
+  - Contains: city ID, city name, continent/province, country ID, latitude and longitude coordinates
 - **world_country_code.csv**
   - 245 countrys code info
-  - Contains: chinese country name, english name, english fullname, 2-ID, 3-ID, IDnum
+  - Contains: chinese country name, english name, english fullname, 2-digis ID, 3-digis ID, IDnum
+- **world_power_plants.csv**
+  - 167 countries, 34936 power plant data.
+  - Data extracted from: https://global-power-plants.datasettes.com/
+  - Contains: Country ID, Power Plant Name, capacity (mw), Latitude, Longitude, Primary Fuel, commissioning year
 
 ### Chinese cities and Enterprise / Universities
 - **cn_city_l5_2021.csv**
